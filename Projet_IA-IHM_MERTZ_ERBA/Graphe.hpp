@@ -1,10 +1,10 @@
 #ifndef GRAPHE_HPP_INCLUDED
 #define GRAPHE_HPP_INCLUDED
-
+using namespace std;
 #include"Sommet.hpp"
 #include "Arete.hpp"
+#include "Pelement.hpp"
 
-using namespace std;
 
 template <class S, class T>
 class Graphe

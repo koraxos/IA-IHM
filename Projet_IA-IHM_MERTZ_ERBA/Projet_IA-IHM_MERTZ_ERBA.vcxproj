@@ -78,16 +78,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="algebreLineaire.hpp" />
     <ClInclude Include="Arete.hpp" />
+    <ClInclude Include="DessinGraphe.hpp" />
+    <ClInclude Include="DessinGrapheRecuitSimule.hpp" />
     <ClInclude Include="GElement.h" />
     <ClInclude Include="Graphe.hpp" />
+    <ClInclude Include="InfoAreteCarte.hpp" />
+    <ClInclude Include="InfoSommetCarte.hpp" />
+    <ClInclude Include="OutilsCarteRecuitSimule.hpp" />
     <ClInclude Include="Pelement.hpp" />
+    <ClInclude Include="SolutionCout.hpp" />
     <ClInclude Include="Sommet.hpp" />
+    <ClInclude Include="Vecteur2D.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DessinGraphe.cpp" />
+    <ClCompile Include="DessinGrapheRecuitSimule.cpp" />
     <ClCompile Include="GElement.cpp" />
+    <ClCompile Include="InfoAreteCarte.cpp" />
+    <ClCompile Include="InfoSommetCarte.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OutilsCarteRecuitSimule.cpp" />
     <ClCompile Include="Pelement.cpp" />
+    <ClCompile Include="Vecteur2D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
