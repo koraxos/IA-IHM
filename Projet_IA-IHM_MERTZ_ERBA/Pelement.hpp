@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include<sstream>
+
 using namespace std;
 
 template <class T>
@@ -16,6 +17,9 @@ public:
 	* Ne crée pas de copie de *v.
 	Pointe donc sur la donnée originale *v
 	* */
+	
+	
+
 	PElement(T * v, PElement<T> * s);
 
 
@@ -75,14 +79,10 @@ public:
 	* */
 	static T * depiler(PElement<T> * & l);
 
+
 	//-------------------------- PElement<T> ---------------------------
 };
-/*
-template<class T>
-ostream& operator <<(ostream & os, const PElement<T> * p)
-{
-	return os << PElement<T>::toString(p);
-}*/
+
 
 template<class T>
 ostream& operator <<(ostream & os, const PElement<T> * p)

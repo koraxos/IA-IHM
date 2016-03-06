@@ -59,9 +59,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Pelement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

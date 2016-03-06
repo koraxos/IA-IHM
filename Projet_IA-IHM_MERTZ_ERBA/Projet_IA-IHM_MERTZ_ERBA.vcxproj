@@ -100,7 +100,6 @@
     <ClCompile Include="InfoSommetCarte.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OutilsCarteRecuitSimule.cpp" />
-    <ClCompile Include="Pelement.cpp" />
     <ClCompile Include="Vecteur2D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

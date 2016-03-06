@@ -111,7 +111,8 @@ int main()
 		s[2] = g1.creeSommet(InfoSommetCarte("s2", Vecteur2D(5, 2)));
 		s[3] = g1.creeSommet(InfoSommetCarte("s3", Vecteur2D(5, 3)));
 		s[4] = g1.creeSommet(InfoSommetCarte("s4", Vecteur2D(3, 4)));
-		s[5] = g1.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));		// cette répétition de 6 instructions pourrait être avantageusement remplacée par une boucle
+		s[5] = g1.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));		
+		// cette répétition de 6 instructions pourrait être avantageusement remplacée par une boucle
 		// elle a été uniquement été laissée pour améliorer la lisibilité
 
 	
@@ -134,6 +135,20 @@ int main()
 		}
 		//--------------- ca y est, g1 est créé et complet ----------------------------------
 	
+		g1.lSommets[0].v->degre;
+		/*
+
+		ICi à a faire construire la solution initiale
+		definir la fonction cout: renvoie le cout d'un chemin eulérien d'une solutions (liste de sommets)
+		definir la fonction changement aleéatoire
+		**/
+
+
+
+
+
+
+
 		// ----------------- on affiche sur la console toutes les informations contenues dans g1
 	
 		cout << "g1 = " << endl << g1 << endl;
@@ -143,8 +158,10 @@ int main()
 		//----------------- on crée le fichier texte pour dessiner g1 ------------------------------
 
 		string nomFichierDessin = "grapheHexagonalComplet.txt";
-		ofstream f(nomFichierDessin);							// ouverture de f en écriture, en mode texte (cf. doc cplusplus.com)
-		Vecteur2D coinBG(-1, -1), coinHD(5, 5);					// limites de la fenêtre à visualiser. calculées à partir des coordonnées des sommets
+		ofstream f(nomFichierDessin);							
+		// ouverture de f en écriture, en mode texte (cf. doc cplusplus.com)
+		Vecteur2D coinBG(-1, -1), coinHD(5, 5);					
+		// limites de la fenêtre à visualiser. calculées à partir des coordonnées des sommets
 		string couleurRepere = "blue";
 		int rayonSommet = 5;									// unité :  pixel
 		string couleurSommets = "red";
