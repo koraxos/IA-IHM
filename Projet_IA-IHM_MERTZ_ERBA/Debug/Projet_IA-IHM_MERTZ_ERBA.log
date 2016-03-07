@@ -1,14 +1,9 @@
-﻿Build started 06/03/2016 19:11:24.
+﻿Build started 07/03/2016 02:33:21.
      1>Project "C:\Users\MERTZ\Documents\Visual_Studio_2013\Projects\Projet_IA-IHM_MERTZ_ERBA\Projet_IA-IHM_MERTZ_ERBA\Projet_IA-IHM_MERTZ_ERBA.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt DessinGraphe.cpp DessinGrapheRecuitSimule.cpp OutilsCarteRecuitSimule.cpp main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-         Generating Code...
-         Compiling...
-         OutilsCarteRecuitSimule.cpp
-         DessinGrapheRecuitSimule.cpp
-         DessinGraphe.cpp
-         Generating Code...
+     1>c:\users\mertz\documents\visual_studio_2013\projects\projet_ia-ihm_mertz_erba\projet_ia-ihm_mertz_erba\main.cpp(128): warning C4101: 'ch' : unreferenced local variable
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\MERTZ\Documents\Visual_Studio_2013\Projects\Projet_IA-IHM_MERTZ_ERBA\Debug\Projet_IA-IHM_MERTZ_ERBA.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\MERTZ\Documents\Visual_Studio_2013\Projects\Projet_IA-IHM_MERTZ_ERBA\Debug\Projet_IA-IHM_MERTZ_ERBA.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\MERTZ\Documents\Visual_Studio_2013\Projects\Projet_IA-IHM_MERTZ_ERBA\Debug\Projet_IA-IHM_MERTZ_ERBA.lib" /MACHINE:X86 Debug\DessinGraphe.obj
          Debug\DessinGrapheRecuitSimule.obj
@@ -23,4 +18,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:07.61
+Time Elapsed 00:00:03.21

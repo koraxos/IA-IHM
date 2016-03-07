@@ -2,6 +2,7 @@
 
 #include <float.h>
 #include <math.h>
+#include <list>
 #include <stdlib.h>
 #include <sstream>
 #include<fstream>
@@ -92,6 +93,35 @@ const SolutionCout<S> recuitSimule(const double & tInitiale, const double & tFin
 
 
 
+//@param fonction succ(...) : calcule la température suivante de la température courante.Doit vérifier succ(t) < t, quelque soit t
+//Fonction succ(t)
+// renvoie toujours succ(t) <t
+
+double succ(double t)
+{
+	return 0.99*t;
+}
+
+double cout_solution(list < Arete<InfoAreteCarte, InfoSommetCarte> *> are_sol)
+{
+	list < Arete<InfoAreteCarte, InfoSommetCarte> *>::const_iterator compteur;
+	double cout_sol = 0;
+	Sommet<InfoSommetCarte> *last_visited=NULL;
+
+	for (compteur = are_sol.begin(); compteur != are_sol.end(); compteur++)
+	{
+		if ((*compteur) != NULL)
+		{
+			cout_sol += (*compteur)->v.cout;
+			last_visited = (*compteur)->fin;
+		}
+	}
+
+	cout_sol += OutilsCarteRecuitSimule::distance((*are_sol.begin())->debut, last_visited);
+	cout << cout_sol << endl;
+	return cout_sol;
+}
+
 int main()
 //int main()
 {
@@ -111,11 +141,11 @@ int main()
 		s[2] = g1.creeSommet(InfoSommetCarte("s2", Vecteur2D(5, 2)));
 		s[3] = g1.creeSommet(InfoSommetCarte("s3", Vecteur2D(5, 3)));
 		s[4] = g1.creeSommet(InfoSommetCarte("s4", Vecteur2D(3, 4)));
-		s[5] = g1.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));		
+		s[5] = g1.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));
 		// cette répétition de 6 instructions pourrait être avantageusement remplacée par une boucle
 		// elle a été uniquement été laissée pour améliorer la lisibilité
 
-	
+
 
 		//----------------------- on crée les arêtes dans g1 --------------------------------------
 
@@ -125,7 +155,7 @@ int main()
 		int k;		// indice de l'arête courante
 
 		for (i = 0, k = 0; i < S1; ++i)
-		for (j = i + 1; j < S1; ++j)
+		for (j =i+ 1; j < S1; ++j)
 		{
 			double d = OutilsCarteRecuitSimule::distance(s[i], s[j]);  // calcul de la distance du sommet s[i] à s[j]
 			a[k++] = g1.creeArete(s[i], s[j], InfoAreteCarte(d));
@@ -134,47 +164,82 @@ int main()
 			// a[k++] = OutilsCarteRecuitSimule.creeArete(s[i],s[j],g1);
 		}
 		//--------------- ca y est, g1 est créé et complet ----------------------------------
-	
-		g1.lSommets[0].v->degre;
+
+
 		/*
+
 
 		ICi à a faire construire la solution initiale
 		definir la fonction cout: renvoie le cout d'un chemin eulérien d'une solutions (liste de sommets)
 		definir la fonction changement aleéatoire
+
+		On représente une solution S par une liste des sommets
+		dans l'ordre de passage du chemin hamiltonien
+		SOlutioncout(listede sommet ... ... ...) on la solution initiale de cette façon
 		**/
 
+		/*
+		const S & solutionInitiale,
+		double(*cout1)(const S & solution), const S(*changementAleatoire)(const S & solution), double(*succ)(const double & temperature)
+		@param solutionInitiale : solution initiale du problème
+		@param fonction cout1(...) : permet d'évaluer la qualité d'une solution, plus le coût est faible, meilleure est la solution
+		@param fonction changementAleatoire(...) : construit une nouvelle solution par perturbation aléatoire de la solution courante
+
+		@return bestSolution : la meilleure solution trouvée*/
+
+		Arete<InfoAreteCarte, InfoSommetCarte> * Arete_Solution[A1];
+		Arete_Solution[0] = g1.getAreteParSommets(s[0], s[1]);// on recupere une arete de cette façon
 
 
 
-
-
-
-		// ----------------- on affiche sur la console toutes les informations contenues dans g1
+		list < Arete<InfoAreteCarte, InfoSommetCarte> *> solution_initiale;
+		list < Arete<InfoAreteCarte, InfoSommetCarte> *>::const_iterator compteur;
+		// Solution initiale
+		for (int i = 0; i < g1.nombreSommets()-1; i++)
+		{
+			solution_initiale.push_back(g1.getAreteParSommets(s[i], s[i + 1]));
+		}
+		
+		double	cout_final = cout_solution(solution_initiale);
+		cout << cout_final << endl;
 	
-		cout << "g1 = " << endl << g1 << endl;
-	
-		cout << "tapez un caractère, puis ENTER\n"; cin >> ch;
+		// essayer de faire avec lsommets plutôt que liste d'arrête
+		// appeler double d = OutilsCarteRecuitSimule::distance(s[i], s[j]); dans cout
+		// pour voir quelque chose du style
+		// SolutionCout<tab de sommet>res_init(solution_initiale,cout_solution);
 
-		//----------------- on crée le fichier texte pour dessiner g1 ------------------------------
 
-		string nomFichierDessin = "grapheHexagonalComplet.txt";
-		ofstream f(nomFichierDessin);							
-		// ouverture de f en écriture, en mode texte (cf. doc cplusplus.com)
-		Vecteur2D coinBG(-1, -1), coinHD(5, 5);					
-		// limites de la fenêtre à visualiser. calculées à partir des coordonnées des sommets
-		string couleurRepere = "blue";
-		int rayonSommet = 5;									// unité :  pixel
-		string couleurSommets = "red";
-		string couleurAretes = "blue";
+		/*
 
-		DessinGrapheRecuitSimule::ecritGraphe(f, g1, coinBG, coinHD, couleurRepere, rayonSommet, couleurSommets, couleurAretes);
+		SolutionCout < list < Arete <InfoAreteCarte, InfoSommetCarte> *>> res(solution_initiale);*/
 
-		cout << "le fichier texte de  dessin " << nomFichierDessin << " a été créé" << endl;
+		//	// ----------------- on affiche sur la console toutes les informations contenues dans g1
+		//
+		//	cout << "g1 = " << endl << g1 << endl;
+		//
+		//	cout << "tapez un caractère, puis ENTER\n"; cin >> ch;
 
-	}	//--------------- fin 1er exemple de graphe ------------------------------
+		//	//----------------- on crée le fichier texte pour dessiner g1 ------------------------------
 
-	cin >> ch;
+		//	string nomFichierDessin = "grapheHexagonalComplet.txt";
+		//	ofstream f(nomFichierDessin);							
+		//	// ouverture de f en écriture, en mode texte (cf. doc cplusplus.com)
+		//	Vecteur2D coinBG(-1, -1), coinHD(5, 5);					
+		//	// limites de la fenêtre à visualiser. calculées à partir des coordonnées des sommets
+		//	string couleurRepere = "blue";
+		//	int rayonSommet = 5;									// unité :  pixel
+		//	string couleurSommets = "red";
+		//	string couleurAretes = "blue";
 
-	system("pause");
-	return 0;
+		//	DessinGrapheRecuitSimule::ecritGraphe(f, g1, coinBG, coinHD, couleurRepere, rayonSommet, couleurSommets, couleurAretes);
+
+		//	cout << "le fichier texte de  dessin " << nomFichierDessin << " a été créé" << endl;
+
+		//}	//--------------- fin 1er exemple de graphe ------------------------------
+
+		//cin >> ch;
+
+		system("pause");
+		return 0;
+	}
 }
