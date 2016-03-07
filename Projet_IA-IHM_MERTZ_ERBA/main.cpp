@@ -97,30 +97,25 @@ const SolutionCout<S> recuitSimule(const double & tInitiale, const double & tFin
 //Fonction succ(t)
 // renvoie toujours succ(t) <t
 
-double succ(double t)
+inline double succ(double t)
 {
 	return 0.99*t;
 }
 
-double cout_solution(list < Arete<InfoAreteCarte, InfoSommetCarte> *> are_sol)
+inline double cout_solution(const Graphe<InfoAreteCarte, InfoSommetCarte> & are_sol)
 {
-	list < Arete<InfoAreteCarte, InfoSommetCarte> *>::const_iterator compteur;
 	double cout_sol = 0;
-	Sommet<InfoSommetCarte> *last_visited=NULL;
-
-	for (compteur = are_sol.begin(); compteur != are_sol.end(); compteur++)
-	{
-		if ((*compteur) != NULL)
-		{
-			cout_sol += (*compteur)->v.cout;
-			last_visited = (*compteur)->fin;
-		}
+	int compteur = 0;
+	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * cout_init = are_sol.lAretes;
+	for (compteur = 0; compteur < are_sol.nombreSommets(); compteur++)
+	{	// calcul du cout en fonction de la lsie des arrêtes
+		cout_sol += cout_init->v->v.cout;
+		cout_init = cout_init->s;
 	}
-
-	cout_sol += OutilsCarteRecuitSimule::distance((*are_sol.begin())->debut, last_visited);
 	cout << cout_sol << endl;
 	return cout_sol;
 }
+
 
 int main()
 //int main()
@@ -132,7 +127,7 @@ int main()
 
 		Graphe<InfoAreteCarte, InfoSommetCarte> g1;	// création du graphe g1 vide
 
-
+	
 		//----------------------- on crée les sommets dans g1 -------------------------------------
 
 		Sommet<InfoSommetCarte> * s[S1];
@@ -156,52 +151,67 @@ int main()
 
 		for (i = 0, k = 0; i < S1; ++i)
 		for (j =i+ 1; j < S1; ++j)
-		{
-			double d = OutilsCarteRecuitSimule::distance(s[i], s[j]);  // calcul de la distance du sommet s[i] à s[j]
+		{	double d = OutilsCarteRecuitSimule::distance(s[i], s[j]);  // calcul de la distance du sommet s[i] à s[j]
 			a[k++] = g1.creeArete(s[i], s[j], InfoAreteCarte(d));
-
-			// on peut remplacer les 2 lignes précédentes par l'unique ligne suivante :
+					// on peut remplacer les 2 lignes précédentes par l'unique ligne suivante :
 			// a[k++] = OutilsCarteRecuitSimule.creeArete(s[i],s[j],g1);
 		}
 		//--------------- ca y est, g1 est créé et complet ----------------------------------
-
-
 		/*
-
-
 		ICi à a faire construire la solution initiale
 		definir la fonction cout: renvoie le cout d'un chemin eulérien d'une solutions (liste de sommets)
 		definir la fonction changement aleéatoire
-
 		On représente une solution S par une liste des sommets
 		dans l'ordre de passage du chemin hamiltonien
 		SOlutioncout(listede sommet ... ... ...) on la solution initiale de cette façon
 		**/
 
-		/*
-		const S & solutionInitiale,
-		double(*cout1)(const S & solution), const S(*changementAleatoire)(const S & solution), double(*succ)(const double & temperature)
-		@param solutionInitiale : solution initiale du problème
-		@param fonction cout1(...) : permet d'évaluer la qualité d'une solution, plus le coût est faible, meilleure est la solution
-		@param fonction changementAleatoire(...) : construit une nouvelle solution par perturbation aléatoire de la solution courante
-
-		@return bestSolution : la meilleure solution trouvée*/
-
 		Arete<InfoAreteCarte, InfoSommetCarte> * Arete_Solution[A1];
 		Arete_Solution[0] = g1.getAreteParSommets(s[0], s[1]);// on recupere une arete de cette façon
 
+		// Solution initiale
+		for (int i = 0; i < g1.nombreSommets() - 1; i++)
+		{	Arete_Solution[i]=g1.getAreteParSommets(s[i], s[i + 1]);
+		}
 
+		Graphe<InfoAreteCarte, InfoSommetCarte> sol_initiale;
+			Sommet<InfoSommetCarte> * sommets[S1];
+			sommets[0] = sol_initiale.creeSommet(InfoSommetCarte("s0", Vecteur2D(1, 2)));
+			sommets[1] = sol_initiale.creeSommet(InfoSommetCarte("s1", Vecteur2D(3, 1)));
+			sommets[2] = sol_initiale.creeSommet(InfoSommetCarte("s2", Vecteur2D(5, 2)));
+			sommets[3] = sol_initiale.creeSommet(InfoSommetCarte("s3", Vecteur2D(5, 3)));
+			sommets[4] = sol_initiale.creeSommet(InfoSommetCarte("s4", Vecteur2D(3, 4)));
+			sommets[5] = sol_initiale.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));
 
+			int S_C = 0;//Sommet_Courant
+			int S_S=0;//Sommet_Suivant
+			double d = 0;
+			for (i = 0; i < 6; i++)
+			{
+				S_C = i;
+				if (i != 5)
+					S_S = S_C + 1;
+				else
+					S_S = 0;
+
+				d = OutilsCarteRecuitSimule::distance(s[S_C], s[S_S]);
+				sol_initiale.creeArete(sommets[S_C], sommets[S_S], InfoAreteCarte(d));
+			}
+			sol_initiale.lAretes;
+
+			double	cout_final = cout_solution(sol_initiale);
+			cout << cout_final << endl;
+
+			SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution(sol_initiale,cout_solution);
+				/*
 		list < Arete<InfoAreteCarte, InfoSommetCarte> *> solution_initiale;
 		list < Arete<InfoAreteCarte, InfoSommetCarte> *>::const_iterator compteur;
-		// Solution initiale
-		for (int i = 0; i < g1.nombreSommets()-1; i++)
-		{
-			solution_initiale.push_back(g1.getAreteParSommets(s[i], s[i + 1]));
-		}
+		*/
+
 		
-		double	cout_final = cout_solution(solution_initiale);
-		cout << cout_final << endl;
+		
+		 /*SolutionCout<Graphe<InfoAreteCarte, InfoSommetCarte>> meilleursolution(g1,cout) ;*/
+		
 	
 		// essayer de faire avec lsommets plutôt que liste d'arrête
 		// appeler double d = OutilsCarteRecuitSimule::distance(s[i], s[j]); dans cout
@@ -209,8 +219,8 @@ int main()
 		// SolutionCout<tab de sommet>res_init(solution_initiale,cout_solution);
 
 
+		
 		/*
-
 		SolutionCout < list < Arete <InfoAreteCarte, InfoSommetCarte> *>> res(solution_initiale);*/
 
 		//	// ----------------- on affiche sur la console toutes les informations contenues dans g1
@@ -241,5 +251,8 @@ int main()
 
 		system("pause");
 		return 0;
+
 	}
+	
 }
+template class SolutionCout<Graphe <InfoAreteCarte, InfoSommetCarte>>;

@@ -84,13 +84,15 @@ Graphe<S, T>::Graphe() :prochaineClef(0), lAretes(NULL), lSommets(NULL){}
 template <class S, class T>
 Graphe<S, T>::Graphe(const Graphe<S, T> & graphe)
 {
-	throw Erreur("pas encore écrit : reste à faire");
+	lSommets=graphe.lSommets;
+	lAretes = graphe.lAretes;
+	
 }
 
 template <class S, class T>
 const Graphe<S, T> & Graphe<S, T>::operator = (const Graphe<S, T> & graphe)
 {
-	throw Erreur("pas encore écrit : reste à faire");
+	throw exception("pas encore écrit : reste à faire");
 }
 
 template <class S, class T>
