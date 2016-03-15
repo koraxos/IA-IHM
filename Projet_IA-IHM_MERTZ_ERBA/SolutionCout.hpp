@@ -15,8 +15,15 @@ public:
 
 	const SolutionCout<S> change(const S(*changementAleatoire) (const S & solution), double(*cout1) (const S & solution)) const;
 
+	~SolutionCout();
 	operator string() const;
 };
+
+template<class S>
+SolutionCout<S>::~SolutionCout(){
+	solution.~S();
+}
+
 
 template <class S>
 ostream & operator << (ostream & os, const SolutionCout<S> & solutionCout)

@@ -23,6 +23,7 @@ using namespace std;
 
 #define K 1	// constante pour le test de Métropolis, telle que K > 0
 
+
 #define S1 6				// nombre de sommets du graphe g1
 #define A1 (S1*(S1-1)/2)	// nombre d'arêtes du graphe g1 car g1 est complet
 
@@ -56,6 +57,7 @@ S est l'ensemble des solutions ou encore le domaine d'exploration
 @return bestSolution : la meilleure solution trouvée
 retourne aussi le coût de la meilleure soution grâce au paramètre coutBestSolution
 */
+
 template <class S>
 const SolutionCout<S> recuitSimule(const double & tInitiale, const double & tFinale, const int nombreTentativesMax, const int nombreSuccesMax, const S & solutionInitiale,
 	double(*cout1)(const S & solution), const S(*changementAleatoire)(const S & solution), double(*succ)(const double & temperature))
@@ -93,29 +95,70 @@ const SolutionCout<S> recuitSimule(const double & tInitiale, const double & tFin
 
 
 
-//@param fonction succ(...) : calcule la température suivante de la température courante.Doit vérifier succ(t) < t, quelque soit t
-//Fonction succ(t)
-// renvoie toujours succ(t) <t
-
+/* Fonction succ(t)
+*	Doit vérifier succ(t) < t, quelque soit t
+* renvoie toujours succ(t) <t
+* @param t la température courante
+* @return la température refroidie
+*/
 inline double succ(double t)
 {
 	return 0.99*t;
 }
+/**
+	Renvoie un entier aléatoire entre deb et fin 
+	@param deb:début de l'intervalle
+	@param fin:fin de l'intervalle
+**/
+int randomizer(int deb, int end)
+{	return rand() % (end - deb) + deb;
+}
+/*
+=======================================
+		CETTE FONCTION NE MARCHE PAS ET EST PROBABLEMENT FAUSSE
+		BEAUCOUP DE CODE DE TEST DIVERSE SUBSISTE MAIS NE FONT PAS PARTIE DE LA VERSION FINALE
+		QUI SERA PRÊTE POUR LA SOUTENANCE
+========================================
+La fonction changement aléatoire sert à changer la nature d'une solution pour la rendre différentre mais restants dans l'ensemble général des solutions
+c'est grâce aux critères aléatoires de cette fonction que l'algorithme de recuit simulé peut fonctionner(stochastiquement) dans son choix de meilleur solution
+@param solution: la solution à changer aléatoirement
+@return la nouvelle solution changer aléatoirement
+*/
+inline const Graphe <InfoAreteCarte, InfoSommetCarte> changementAleatoire(const  Graphe <InfoAreteCarte, InfoSommetCarte> &solution)
+{	Graphe <InfoAreteCarte, InfoSommetCarte> solution_to_return;
+	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * list_init_ar = solution.lAretes;
+	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * list_temp_ar;
+	PElement<Sommet<InfoSommetCarte>> * liste_init_sommet = solution.lSommets;
 
-inline double cout_solution(const Graphe<InfoAreteCarte, InfoSommetCarte> & are_sol)
+	bool trouve = true;
+	/*Ldeb, temp_suivant_deb, fin, tem_suivant_fin
+	on besoin d'être initalisé car ils sont utilisés dans des instructions imbriqués*/
+	int set_size = liste_init_sommet->taille(liste_init_sommet);
+	double rand1 = randomizer(0, set_size);
+	double rand2 = randomizer(0, set_size);
+
+	while( (rand1 == rand2) || (rand2 == rand1 + 1) || (rand1 == rand2 + 1))
+	{	rand2 = randomizer(0, set_size);
+	}	
+	return solution_to_return;
+}
+/*
+ cout_solution : Permet de calculer le cout d'une solution selon la somme du poids de ses arrêtes
+@param Graphe_are_sol : Représente Le graphe d'arrête - solution 
+@return la somme du poids des arrêtes , qui représente bien le cout
+*/
+inline double cout_solution(const Graphe<InfoAreteCarte, InfoSommetCarte> & Graphe_are_solare_sol)
 {
 	double cout_sol = 0;
 	int compteur = 0;
-	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * cout_init = are_sol.lAretes;
-	for (compteur = 0; compteur < are_sol.nombreSommets(); compteur++)
-	{	// calcul du cout en fonction de la lsie des arrêtes
-		cout_sol += cout_init->v->v.cout;
-		cout_init = cout_init->s;
+	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * aretes_sol = Graphe_are_solare_sol.lAretes;
+	for (compteur = 0; compteur <Graphe_are_solare_sol.nombreSommets(); compteur++)
+	{	// calcul du cout en fonction de la liste des arrêtes
+		cout_sol += aretes_sol->v->v.cout;
+		aretes_sol = aretes_sol->s;
 	}
-	cout << cout_sol << endl;
 	return cout_sol;
 }
-
 
 int main()
 //int main()
@@ -126,8 +169,7 @@ int main()
 		cout << "construction d'un 1er exemple de graphe complet à 6 sommets" << endl;
 
 		Graphe<InfoAreteCarte, InfoSommetCarte> g1;	// création du graphe g1 vide
-
-	
+			
 		//----------------------- on crée les sommets dans g1 -------------------------------------
 
 		Sommet<InfoSommetCarte> * s[S1];
@@ -139,9 +181,7 @@ int main()
 		s[5] = g1.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));
 		// cette répétition de 6 instructions pourrait être avantageusement remplacée par une boucle
 		// elle a été uniquement été laissée pour améliorer la lisibilité
-
-
-
+		
 		//----------------------- on crée les arêtes dans g1 --------------------------------------
 
 		Arete<InfoAreteCarte, InfoSommetCarte> * a[A1];
@@ -157,23 +197,10 @@ int main()
 			// a[k++] = OutilsCarteRecuitSimule.creeArete(s[i],s[j],g1);
 		}
 		//--------------- ca y est, g1 est créé et complet ----------------------------------
-		/*
-		ICi à a faire construire la solution initiale
-		definir la fonction cout: renvoie le cout d'un chemin eulérien d'une solutions (liste de sommets)
-		definir la fonction changement aleéatoire
-		On représente une solution S par une liste des sommets
-		dans l'ordre de passage du chemin hamiltonien
-		SOlutioncout(listede sommet ... ... ...) on la solution initiale de cette façon
-		**/
 
-		Arete<InfoAreteCarte, InfoSommetCarte> * Arete_Solution[A1];
-		Arete_Solution[0] = g1.getAreteParSommets(s[0], s[1]);// on recupere une arete de cette façon
-
-		// Solution initiale
-		for (int i = 0; i < g1.nombreSommets() - 1; i++)
-		{	Arete_Solution[i]=g1.getAreteParSommets(s[i], s[i + 1]);
-		}
-
+		/**
+		Creation de la solution Initiale
+		*/
 		Graphe<InfoAreteCarte, InfoSommetCarte> sol_initiale;
 			Sommet<InfoSommetCarte> * sommets[S1];
 			sommets[0] = sol_initiale.creeSommet(InfoSommetCarte("s0", Vecteur2D(1, 2)));
@@ -183,12 +210,12 @@ int main()
 			sommets[4] = sol_initiale.creeSommet(InfoSommetCarte("s4", Vecteur2D(3, 4)));
 			sommets[5] = sol_initiale.creeSommet(InfoSommetCarte("s5", Vecteur2D(1, 3)));
 
+			/*creation du chemin eulérien 0-1-2-3-4-5-0*/
 			int S_C = 0;//Sommet_Courant
 			int S_S=0;//Sommet_Suivant
 			double d = 0;
 			for (i = 0; i < 6; i++)
-			{
-				S_C = i;
+			{	S_C = i;
 				if (i != 5)
 					S_S = S_C + 1;
 				else
@@ -197,62 +224,20 @@ int main()
 				d = OutilsCarteRecuitSimule::distance(s[S_C], s[S_S]);
 				sol_initiale.creeArete(sommets[S_C], sommets[S_S], InfoAreteCarte(d));
 			}
-			sol_initiale.lAretes;
-
+			/**
+			test fonction cout
+			*/
 			double	cout_final = cout_solution(sol_initiale);
 			cout << cout_final << endl;
-
-			SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution(sol_initiale,cout_solution);
-				/*
-		list < Arete<InfoAreteCarte, InfoSommetCarte> *> solution_initiale;
-		list < Arete<InfoAreteCarte, InfoSommetCarte> *>::const_iterator compteur;
-		*/
-
-		
-		
-		 /*SolutionCout<Graphe<InfoAreteCarte, InfoSommetCarte>> meilleursolution(g1,cout) ;*/
-		
-	
-		// essayer de faire avec lsommets plutôt que liste d'arrête
-		// appeler double d = OutilsCarteRecuitSimule::distance(s[i], s[j]); dans cout
-		// pour voir quelque chose du style
-		// SolutionCout<tab de sommet>res_init(solution_initiale,cout_solution);
-
-
-		
-		/*
-		SolutionCout < list < Arete <InfoAreteCarte, InfoSommetCarte> *>> res(solution_initiale);*/
-
-		//	// ----------------- on affiche sur la console toutes les informations contenues dans g1
-		//
-		//	cout << "g1 = " << endl << g1 << endl;
-		//
-		//	cout << "tapez un caractère, puis ENTER\n"; cin >> ch;
-
-		//	//----------------- on crée le fichier texte pour dessiner g1 ------------------------------
-
-		//	string nomFichierDessin = "grapheHexagonalComplet.txt";
-		//	ofstream f(nomFichierDessin);							
-		//	// ouverture de f en écriture, en mode texte (cf. doc cplusplus.com)
-		//	Vecteur2D coinBG(-1, -1), coinHD(5, 5);					
-		//	// limites de la fenêtre à visualiser. calculées à partir des coordonnées des sommets
-		//	string couleurRepere = "blue";
-		//	int rayonSommet = 5;									// unité :  pixel
-		//	string couleurSommets = "red";
-		//	string couleurAretes = "blue";
-
-		//	DessinGrapheRecuitSimule::ecritGraphe(f, g1, coinBG, coinHD, couleurRepere, rayonSommet, couleurSommets, couleurAretes);
-
-		//	cout << "le fichier texte de  dessin " << nomFichierDessin << " a été créé" << endl;
-
-		//}	//--------------- fin 1er exemple de graphe ------------------------------
-
-		//cin >> ch;
+			/*test avec l'objet SolutionCout*/
+	SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution(sol_initiale,cout_solution);
+	meilleur_solution.change(changementAleatoire, cout_solution);
+	/*
+	changementAleatoire, à priori ne fonctionne pas , il est possible qu'une boucle infinie y soit présente
+	ce problème sera réglé pour la soutenance normalement
+	*/
 
 		system("pause");
-		return 0;
-
 	}
 	
 }
-template class SolutionCout<Graphe <InfoAreteCarte, InfoSommetCarte>>;

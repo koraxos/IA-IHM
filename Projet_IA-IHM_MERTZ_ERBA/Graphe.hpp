@@ -84,6 +84,7 @@ Graphe<S, T>::Graphe() :prochaineClef(0), lAretes(NULL), lSommets(NULL){}
 template <class S, class T>
 Graphe<S, T>::Graphe(const Graphe<S, T> & graphe)
 {
+	prochaineClef = graphe.prochaineClef;
 	lSommets=graphe.lSommets;
 	lAretes = graphe.lAretes;
 	
@@ -97,9 +98,11 @@ const Graphe<S, T> & Graphe<S, T>::operator = (const Graphe<S, T> & graphe)
 
 template <class S, class T>
 Graphe<S, T>::~Graphe()
-{
+{/*
+	if (this->lAretes)
 	PElement< Arete<S, T>>::efface2(this->lAretes);
-	PElement<Sommet<T> >::efface2(this->lSommets);
+	if (this->lSommets)
+	PElement<Sommet<T> >::efface2(this->lSommets);*/
 }
 
 
