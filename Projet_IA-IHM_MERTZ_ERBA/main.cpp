@@ -125,21 +125,31 @@ c'est grâce aux critères aléatoires de cette fonction que l'algorithme de recuit
 @return la nouvelle solution changer aléatoirement
 */
 inline const Graphe <InfoAreteCarte, InfoSommetCarte> changementAleatoire(const  Graphe <InfoAreteCarte, InfoSommetCarte> &solution)
-{	Graphe <InfoAreteCarte, InfoSommetCarte> solution_to_return;
-	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * list_init_ar = solution.lAretes;
-	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * list_temp_ar;
-	PElement<Sommet<InfoSommetCarte>> * liste_init_sommet = solution.lSommets;
+{	
+	Graphe <InfoAreteCarte, InfoSommetCarte> solution_to_return;
+
+	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * arettes_cheminEulerien_courant = solution.lAretes;
+
+	PElement<Sommet<InfoSommetCarte>> * sommets_cheminEulerien_courant = solution.lSommets;
+	Sommet<InfoSommetCarte> * s1;
+	Sommet<InfoSommetCarte> * s2;
 
 	bool trouve = true;
-	/*Ldeb, temp_suivant_deb, fin, tem_suivant_fin
-	on besoin d'être initalisé car ils sont utilisés dans des instructions imbriqués*/
-	int set_size = liste_init_sommet->taille(liste_init_sommet);
-	double rand1 = randomizer(0, set_size);
-	double rand2 = randomizer(0, set_size);
+	
+	int set_size = sommets_cheminEulerien_courant->taille(sommets_cheminEulerien_courant);
+
+	int rand1 = randomizer(0, set_size-1);
+	int rand2 = randomizer(0, set_size-1);
 
 	while( (rand1 == rand2) || (rand2 == rand1 + 1) || (rand1 == rand2 + 1))
 	{	rand2 = randomizer(0, set_size);
 	}	
+
+	s1 = solution.lSommets->getElement(rand1,solution.lSommets);
+	s2 = solution.lSommets->getElement(rand2, solution.lSommets);
+
+
+
 	return solution_to_return;
 }
 /*
@@ -147,12 +157,12 @@ inline const Graphe <InfoAreteCarte, InfoSommetCarte> changementAleatoire(const 
 @param Graphe_are_sol : Représente Le graphe d'arrête - solution 
 @return la somme du poids des arrêtes , qui représente bien le cout
 */
-inline double cout_solution(const Graphe<InfoAreteCarte, InfoSommetCarte> & Graphe_are_solare_sol)
+inline double cout_solution(const Graphe<InfoAreteCarte, InfoSommetCarte> & Graphe_are_sol)
 {
 	double cout_sol = 0;
 	int compteur = 0;
-	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * aretes_sol = Graphe_are_solare_sol.lAretes;
-	for (compteur = 0; compteur <Graphe_are_solare_sol.nombreSommets(); compteur++)
+	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * aretes_sol = Graphe_are_sol.lAretes;
+	for (compteur = 0; compteur <Graphe_are_sol.nombreSommets(); compteur++)
 	{	// calcul du cout en fonction de la liste des arrêtes
 		cout_sol += aretes_sol->v->v.cout;
 		aretes_sol = aretes_sol->s;
@@ -230,12 +240,11 @@ int main()
 			double	cout_final = cout_solution(sol_initiale);
 			cout << cout_final << endl;
 			/*test avec l'objet SolutionCout*/
+
 	SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution(sol_initiale,cout_solution);
+
 	meilleur_solution.change(changementAleatoire, cout_solution);
-	/*
-	changementAleatoire, à priori ne fonctionne pas , il est possible qu'une boucle infinie y soit présente
-	ce problème sera réglé pour la soutenance normalement
-	*/
+	
 
 		system("pause");
 	}

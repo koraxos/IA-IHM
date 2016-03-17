@@ -44,6 +44,9 @@ public:
 	* */
 	Sommet<T> * creeSommet(const T & info);
 
+
+	
+
 	/**
 	* crée une arête joignant les 2 sommets debut et fin
 	*
@@ -71,6 +74,7 @@ public:
 
 	//---------------------- Graphe ----------------------------------
 };
+
 
 
 

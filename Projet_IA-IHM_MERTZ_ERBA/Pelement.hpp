@@ -13,12 +13,16 @@ public:
 	T * v;
 	PElement<T> * s;
 
+	
+	/**
+	*Retourne le i-ème de la liste de sommet
+	*/
+	static T * getElement(const int i,  PElement<T> * l);
+
 	/**
 	* Ne crée pas de copie de *v.
 	Pointe donc sur la donnée originale *v
 	* */
-	
-	
 
 	PElement(T * v, PElement<T> * s);
 
@@ -82,6 +86,26 @@ public:
 
 	//-------------------------- PElement<T> ---------------------------
 };
+
+
+/**
+* Retourn le i-ème sommet de la liste de sommets du Graphe
+* @param i : la place dans la liste du sommet a retourné
+* @return le sommet à la place i dans la liste
+*/
+template <class T>
+T * PElement<T>::getElement(const int i,  PElement<T> * l)
+{
+	PElement<T> *  temp=l;
+	int compteur = 0;
+	
+	while (compteur < i){
+		temp=temp->s;
+		compteur++;
+	}
+	return  temp->v;
+}
+
 
 
 template<class T>
