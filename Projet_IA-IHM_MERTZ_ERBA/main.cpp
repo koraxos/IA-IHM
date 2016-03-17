@@ -101,7 +101,7 @@ const SolutionCout<S> recuitSimule(const double & tInitiale, const double & tFin
 * @param t la température courante
 * @return la température refroidie
 */
-inline double succ(double t)
+inline double succ(const double &t)
 {
 	return 0.99*t;
 }
@@ -113,12 +113,64 @@ inline double succ(double t)
 int randomizer(int deb, int end)
 {	return rand() % (end - deb) + deb;
 }
+
 /*
-=======================================
-		CETTE FONCTION NE MARCHE PAS ET EST PROBABLEMENT FAUSSE
-		BEAUCOUP DE CODE DE TEST DIVERSE SUBSISTE MAIS NE FONT PAS PARTIE DE LA VERSION FINALE
-		QUI SERA PRÊTE POUR LA SOUTENANCE
-========================================
+	Va chercher l'arrete où S est au début et renvoie le sommet à la fin de cette arrete (le suivant de S)
+	@param S le sommet origine
+	@parem adj_S la liste des arrêtes adjacentes à S ( il n'y en a que deux , une où S est à la fin et une autre où est au début)
+	@return le sommet suivant de S
+*/
+Sommet<InfoSommetCarte> * getSuivant(Sommet<InfoSommetCarte> * S, 
+	PElement< pair< Sommet<InfoSommetCarte> *, Arete<InfoAreteCarte, InfoSommetCarte>* > > * adj_S)
+{
+	bool trouve = false;
+	Sommet<InfoSommetCarte> * suivant_de_S=NULL;
+	while (!trouve)
+	{
+		if (S == adj_S->v->second->debut)
+		{
+			suivant_de_S = adj_S->v->second->fin;
+			trouve = true;
+		}
+		else
+			adj_S = adj_S->s;
+	}
+	return suivant_de_S;
+}
+
+/**
+*
+*
+*/
+void inversion(Sommet<InfoSommetCarte> * Origine, Sommet<InfoSommetCarte>* Cible, Graphe <InfoAreteCarte, InfoSommetCarte>  solution)
+{
+	Sommet<InfoSommetCarte> * suivant_de_Origine,*temp;
+	Arete<InfoAreteCarte, InfoSommetCarte>* arete_temp;
+	PElement< pair< Sommet<InfoSommetCarte> *, Arete<InfoAreteCarte, InfoSommetCarte>* > >  * adj_Origine;
+	double nouveau_cout;
+
+	adj_Origine = solution.adjacences(Origine);
+	suivant_de_Origine = getSuivant(Origine, adj_Origine);
+
+	if (Cible != suivant_de_Origine)
+	{	inversion(suivant_de_Origine, Cible, solution);
+
+		arete_temp = solution.getAreteParSommets(Origine, suivant_de_Origine);
+
+		arete_temp->fin = Origine;
+		arete_temp->debut = suivant_de_Origine;
+		nouveau_cout = OutilsCarteRecuitSimule::distance(arete_temp->fin, arete_temp->debut);
+		arete_temp->v.cout = nouveau_cout;
+	}
+	else
+	{	arete_temp = solution.getAreteParSommets(Origine, Cible);
+		arete_temp->fin = Origine;
+		arete_temp->debut = Cible;
+		nouveau_cout = OutilsCarteRecuitSimule::distance(arete_temp->fin, arete_temp->debut);
+		arete_temp->v.cout = nouveau_cout;
+	}
+}
+/*
 La fonction changement aléatoire sert à changer la nature d'une solution pour la rendre différentre mais restants dans l'ensemble général des solutions
 c'est grâce aux critères aléatoires de cette fonction que l'algorithme de recuit simulé peut fonctionner(stochastiquement) dans son choix de meilleur solution
 @param solution: la solution à changer aléatoirement
@@ -126,16 +178,15 @@ c'est grâce aux critères aléatoires de cette fonction que l'algorithme de recuit
 */
 inline const Graphe <InfoAreteCarte, InfoSommetCarte> changementAleatoire(const  Graphe <InfoAreteCarte, InfoSommetCarte> &solution)
 {	
-	Graphe <InfoAreteCarte, InfoSommetCarte> solution_to_return;
+	Graphe <InfoAreteCarte, InfoSommetCarte> *solution_to_return;
 
 	PElement<Arete<InfoAreteCarte, InfoSommetCarte> > * arettes_cheminEulerien_courant = solution.lAretes;
-
 	PElement<Sommet<InfoSommetCarte>> * sommets_cheminEulerien_courant = solution.lSommets;
-	Sommet<InfoSommetCarte> * s1;
-	Sommet<InfoSommetCarte> * s2;
 
-	bool trouve = true;
-	
+	Arete<InfoAreteCarte, InfoSommetCarte>* arete_s1_suivant_de_s1, *arete_s2_suivant_de_s2;
+	Sommet<InfoSommetCarte> * s1, *suivant_de_s1, *s2, *suivant_de_s2;
+	PElement< pair< Sommet<InfoSommetCarte> *, Arete<InfoAreteCarte, InfoSommetCarte>* > >  * adj_s1, *adj_s2;
+
 	int set_size = sommets_cheminEulerien_courant->taille(sommets_cheminEulerien_courant);
 
 	int rand1 = randomizer(0, set_size-1);
@@ -144,13 +195,26 @@ inline const Graphe <InfoAreteCarte, InfoSommetCarte> changementAleatoire(const 
 	while( (rand1 == rand2) || (rand2 == rand1 + 1) || (rand1 == rand2 + 1))
 	{	rand2 = randomizer(0, set_size);
 	}	
+	solution_to_return = new Graphe <InfoAreteCarte, InfoSommetCarte>(solution);
 
-	s1 = solution.lSommets->getElement(rand1,solution.lSommets);
-	s2 = solution.lSommets->getElement(rand2, solution.lSommets);
+	s1 = solution_to_return->lSommets->getElement(rand1, solution_to_return->lSommets);
+	s2 = solution_to_return->lSommets->getElement(rand2, solution_to_return->lSommets);
+	
+	adj_s1 = solution_to_return->adjacences(s1);
+	adj_s2 = solution_to_return->adjacences(s2);
 
+	suivant_de_s1 = getSuivant(s1, adj_s1);
+	suivant_de_s2 = getSuivant(s2, adj_s2);
 
+	arete_s1_suivant_de_s1 = solution_to_return->getAreteParSommets(s1, suivant_de_s1);
+	arete_s2_suivant_de_s2 = solution_to_return->getAreteParSommets(s2, suivant_de_s2);
 
-	return solution_to_return;
+	arete_s1_suivant_de_s1->fin = s2;
+	arete_s2_suivant_de_s2->debut = suivant_de_s1;
+
+	inversion(suivant_de_s1, s2, *solution_to_return);
+	
+	return *solution_to_return;
 }
 /*
  cout_solution : Permet de calculer le cout d'une solution selon la somme du poids de ses arrêtes
@@ -230,7 +294,6 @@ int main()
 					S_S = S_C + 1;
 				else
 					S_S = 0;
-
 				d = OutilsCarteRecuitSimule::distance(s[S_C], s[S_S]);
 				sol_initiale.creeArete(sommets[S_C], sommets[S_S], InfoAreteCarte(d));
 			}
@@ -241,12 +304,19 @@ int main()
 			cout << cout_final << endl;
 			/*test avec l'objet SolutionCout*/
 
-	SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution(sol_initiale,cout_solution);
+	/*const SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution(sol_initiale,cout_solution);*/
 
-	meilleur_solution.change(changementAleatoire, cout_solution);
-	
 
-		system("pause");
+	 const double  tinitiale = 100;
+	 const  double  tfinale = 10;
+	const int nb_tentative_max = 20;
+	 const int nb_succes_max = 10;
+
+	/*meilleur_solution.change(changementAleatoire, cout_solution);*/
+	 const SolutionCout< Graphe <InfoAreteCarte, InfoSommetCarte>> meilleur_solution = recuitSimule(tinitiale, tfinale, nb_tentative_max, nb_succes_max, sol_initiale, cout_solution, changementAleatoire, succ);
+		
+	 cout << meilleur_solution.cout << endl;
+	 system("pause");
 	}
 	
 }

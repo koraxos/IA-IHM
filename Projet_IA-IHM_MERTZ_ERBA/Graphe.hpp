@@ -91,13 +91,20 @@ Graphe<S, T>::Graphe(const Graphe<S, T> & graphe)
 	prochaineClef = graphe.prochaineClef;
 	lSommets=graphe.lSommets;
 	lAretes = graphe.lAretes;
-	
+	/*
+		Ici il faudrait crée 
+		de nouveaux sommets et 
+		de nouvelles arrêtes récupérant les informations de graphes 
+		et les empiler les listes du nouveau graphe
+	*/
 }
 
 template <class S, class T>
 const Graphe<S, T> & Graphe<S, T>::operator = (const Graphe<S, T> & graphe)
 {
-	throw exception("pas encore écrit : reste à faire");
+	Graphe<S,T>* nouveau_graphe=new Graphe<S, T>(graphe);
+	return *nouveau_graphe;
+	/*throw exception("pas encore écrit : reste à faire");*/
 }
 
 template <class S, class T>
